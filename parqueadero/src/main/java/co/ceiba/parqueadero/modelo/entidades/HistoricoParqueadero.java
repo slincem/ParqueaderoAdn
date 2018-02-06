@@ -3,7 +3,6 @@ package co.ceiba.parqueadero.modelo.entidades;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,31 +19,28 @@ import javax.persistence.TemporalType;
 import co.ceiba.parqueadero.modelo.enums.Estado;
 
 @Entity
-@Table(name="historico_parqueadero")
+@Table(name = "historico_parqueadero")
 public class HistoricoParqueadero implements Serializable {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id_historico", updatable = false, nullable = false)
 	protected Long id;
-	
-	@Column(name="fecha_ingreso")
+
+	@Column(name = "fecha_ingreso")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaIngreso;
-	
-	@Column(name="fecha_salida")
+
+	@Column(name = "fecha_salida")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaSalida;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "id_vehiculo", nullable=false)
+
+	@ManyToOne
+	@JoinColumn(name = "id_vehiculo", unique = false)
 	private Vehiculo vehiculo;
-	
+
 	@Enumerated(EnumType.STRING)
 	private Estado estado;
 

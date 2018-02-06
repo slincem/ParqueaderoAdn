@@ -2,16 +2,16 @@ package co.ceiba.parqueadero.modelo.enums;
 
 public enum Estado {
 	
-	ACTIVO (1),
-	INACTIVO (2);
+	ACTIVO ("Activo"),
+	INACTIVO ("Inactivo");
 	
-	private int estadoVehiculo;
+	private String estadoVehiculo;
 	
-	private Estado(int estadoVehiculo) {
+	private Estado(String estadoVehiculo) {
 		this.estadoVehiculo = estadoVehiculo;
 	}
 
-	public int getEstadoVehiculo() {
+	public String getEstadoVehiculo() {
 		return estadoVehiculo;
 	}	
 	

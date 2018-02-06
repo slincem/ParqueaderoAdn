@@ -20,9 +20,6 @@ import co.ceiba.parqueadero.modelo.enums.TipoVehiculo;
 @Table(name="vehiculo")
 public class Vehiculo implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -30,10 +27,10 @@ public class Vehiculo implements Serializable {
 	@Column(name = "id_vehiculo", updatable = false, nullable = false)
 	protected Long id;
 
-	@Column
+	@Column(unique=true, nullable=false)
 	protected String placa;
 
-	@Column
+	@Column(nullable=false)
 	protected int cilindraje;
 
 	@Enumerated(EnumType.STRING)
@@ -41,6 +38,9 @@ public class Vehiculo implements Serializable {
 
 	@OneToMany(mappedBy = "vehiculo", fetch = FetchType.LAZY)
 	private List<HistoricoParqueadero> listaHistoricoParqueadero;
+	
+	public Vehiculo() {
+	}
 
 	public Vehiculo(String placa, int cilindraje, TipoVehiculo tipoVehiculo) {
 		super();
