@@ -1,8 +1,13 @@
 package co.ceiba.parqueadero.servicio.implementaciones;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.velocity.exception.ParseErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +21,10 @@ import co.ceiba.parqueadero.modelo.enums.TipoVehiculo;
 import co.ceiba.parqueadero.repositorio.HistoricoParqueaderoRepositorio;
 import co.ceiba.parqueadero.repositorio.VehiculoRepositorio;
 import co.ceiba.parqueadero.servicio.VigilanteServicio;
+import co.ceiba.parqueadero.servicio.entidadesnegocio.Parqueadero;
 import co.ceiba.parqueadero.servicio.excepciones.ExcepcionNegocio;
+import co.ceiba.parqueadero.utilitario.FechaUtilitario;
+import co.ceiba.parqueadero.utilitario.constantes.ConstantesExpresionesRegulares;
 import co.ceiba.parqueadero.utilitario.constantes.MensajesError;
 
 @Service
@@ -36,14 +44,36 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 	@Override
 	public VehiculoEnParqueaderoOutDTO consultarVehiculoEnParqueadero(String placa) {
 
-		return historicoParqueaderoRepositorio.consultarVehiculoEnParqueadero(placa);
+		VehiculoEnParqueaderoOutDTO vehiculoEnParqueaderoOutDTO = historicoParqueaderoRepositorio
+				.consultarVehiculoEnParqueadero(placa);
+		if (vehiculoEnParqueaderoOutDTO != null && vehiculoEnParqueaderoOutDTO.getFechaIngreso() != null) {
+			Vehiculo vehiculo = vehiculoRepositorio.findByPlaca(placa);
+			Date fechaIngresoDate;
+			try {
+				fechaIngresoDate = FechaUtilitario.formatearStringAFecha(vehiculoEnParqueaderoOutDTO.getFechaIngreso());
+			} catch (ParseException e) {
+				throw new ParseErrorException(e.getMessage());
+			}
+
+			Double valorAPagar = calcularValorAPagarEnParqueadero(fechaIngresoDate, new Date(),
+					vehiculo.getTipoVehiculo(), vehiculo.getCilindraje());
+			vehiculoEnParqueaderoOutDTO.setValorAPagar(valorAPagar);
+		}
+
+		return vehiculoEnParqueaderoOutDTO;
 	}
 
 	@Override
 	public boolean registrarVehiculoEnParqueadero(VehiculoRegistroInDTO vehiculoRegistroInDto) {
-
+		
+		validarDatosDeRegistro(vehiculoRegistroInDto);
+		
 		if (consultarVehiculoEnParqueadero(vehiculoRegistroInDto.getPlaca()) != null) {
 			throw new ExcepcionNegocio(MensajesError.VEHICULO_YA_ESTA_EN_PARQUEADERO);
+		}
+
+		if (verificarPosibilidadDeEntradaDelVehiculoSegunPlaca(vehiculoRegistroInDto.getPlaca())) {
+			throw new ExcepcionNegocio(MensajesError.PLACA_DE_VEHICULO_NO_PERMITIDA_ESTE_DIA);
 		}
 
 		Vehiculo vehiculo;
@@ -51,6 +81,10 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 			vehiculo = registrarVehiculoPorPrimeraVez(vehiculoRegistroInDto);
 		} else {
 			vehiculo = actualizarDatosVehiculo(vehiculoRegistroInDto);
+		}
+
+		if (!verificarCupoParaVehiculo(vehiculo.getTipoVehiculo())) {
+			throw new ExcepcionNegocio((MensajesError.NO_HAY_DISPONIBILIDAD_DE_CUPO));
 		}
 
 		Vehiculo vehiculoAHistorico = vehiculoRepositorio.findByPlaca(vehiculo.getPlaca());
@@ -69,11 +103,19 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 
 		HistoricoParqueadero historicoParqueadero = historicoParqueaderoRepositorio
 				.consultarHistoricoParqueaderoVehiculoEnParqueadero(vehiculoRegistroSalidaInDto.getPlaca());
-		
-		if(historicoParqueadero == null) {
-			throw new ExcepcionNegocio(MensajesError.VEHICULO_NO_ESTA_EN_PARQUEADERO);
+
+		if (historicoParqueadero == null) {
+			throw new ExcepcionNegocio(MensajesError.HISTORICO_DE_REGISTRO_DEL_VEHICULO_INEXISTENTE);
 		}
-		return false;
+
+		Date fechaSalida = new Date();
+		Vehiculo vehiculo = vehiculoRepositorio.findOne(historicoParqueadero.getVehiculo().getId());
+		Double valorAPagar = calcularValorAPagarEnParqueadero(historicoParqueadero.getFechaIngreso(), fechaSalida,
+				vehiculo.getTipoVehiculo(), vehiculo.getCilindraje());
+
+		historicoParqueaderoRepositorio.actualizarHistoricoDeSalidaVehiculo(historicoParqueadero.getId(), fechaSalida,
+				valorAPagar);
+		return true;
 	}
 
 	public Vehiculo registrarVehiculoPorPrimeraVez(VehiculoRegistroInDTO vehiculoRegistroInDto) {
@@ -105,11 +147,79 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 		return vehiculo;
 	}
 
-	@Override
 	public boolean comprobarExistenciaDeVehiculo(String placa) {
 
 		Vehiculo vehiculoEncontrado = vehiculoRepositorio.findByPlaca(placa);
 		return vehiculoEncontrado != null;
+	}
+
+	public boolean verificarInicioDePlacaPorLetraRegistrinda(String placa) {
+		return placa.charAt(0) != Parqueadero.LETRA_RESTRINGIDA;
+	}
+
+	public boolean verificarDiasDeRestriccionDeLetra() {
+		Date fechaActual = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(fechaActual);
+		int diaDeHoy = calendar.get(Calendar.DAY_OF_WEEK);
+		return diaDeHoy == Calendar.SUNDAY || diaDeHoy == Calendar.MONDAY;
+	}
+
+	public boolean verificarPosibilidadDeEntradaDelVehiculoSegunPlaca(String placa) {
+		return (verificarInicioDePlacaPorLetraRegistrinda(placa) && verificarDiasDeRestriccionDeLetra())
+				|| !(verificarInicioDePlacaPorLetraRegistrinda(placa));
+	}
+
+	public boolean verificarCupoParaVehiculo(TipoVehiculo tipoVehiculo) {
+		if (tipoVehiculo.equals(TipoVehiculo.CARRO)) {
+			return historicoParqueaderoRepositorio
+					.contarVehiculosEnParqueadero(tipoVehiculo) < Parqueadero.CANTIDAD_MAXIMA_DE_CARROS_ADMITIDOS;
+		} else {
+			return historicoParqueaderoRepositorio
+					.contarVehiculosEnParqueadero(tipoVehiculo) < Parqueadero.CANTIDAD_MAXIMA_DE_MOTOS_ADMITIDAS;
+		}
+	}
+
+	public double calcularValorAPagarEnParqueadero(Date fechaIngreso, Date fechaSalida, TipoVehiculo tipoVehiculo,
+			int cilindraje) {
+
+		long diasParqueado = FechaUtilitario.calcularDiferenciaEnDiasEntreFechas(fechaIngreso, fechaSalida);
+		long horasParqueado = FechaUtilitario.calcularDiferenciaEnHorasEntreFechas(fechaIngreso, fechaSalida);
+
+		if (horasParqueado >= Parqueadero.HORAS_INICIO_PARA_COBRAR_POR_DIA) {
+			diasParqueado++;
+			horasParqueado = (long) (horasParqueado - Parqueadero.HORAS_INICIO_PARA_COBRAR_POR_DIA);
+		}
+
+		horasParqueado++;
+
+		if (tipoVehiculo.equals(TipoVehiculo.CARRO)) {
+			return (diasParqueado * Parqueadero.VALOR_DIA_CARRO) + (horasParqueado * Parqueadero.VALOR_HORA_CARRO);
+		} else {
+			int recargoPorCilindraje = 0;
+			if (cilindraje > Parqueadero.CILINDRAJE_PARA_RECARGO) {
+				recargoPorCilindraje = 2000;
+			}
+			return (diasParqueado * Parqueadero.VALOR_DIA_MOTO) + (horasParqueado * Parqueadero.VALOR_HORA_MOTO)
+					+ recargoPorCilindraje;
+		}
+	}
+
+	public void validarDatosDeRegistro(VehiculoRegistroInDTO vehiculoRegistroInDto) {
+		if (vehiculoRegistroInDto.getTipoVehiculo() == null
+				|| (!vehiculoRegistroInDto.getTipoVehiculo().equals(TipoVehiculo.CARRO.getValue())
+						&& !vehiculoRegistroInDto.getTipoVehiculo().equals(TipoVehiculo.MOTO.getValue()))) {
+			throw new ExcepcionNegocio(MensajesError.TIPO_VEHICULO_NO_VALIDO);
+		}
+
+		if (vehiculoRegistroInDto.getPlaca() == null
+				|| !vehiculoRegistroInDto.getPlaca().matches(ConstantesExpresionesRegulares.REGEX_PLACA)) {
+			throw new ExcepcionNegocio(MensajesError.PLACA_NO_VALIDA);
+		}
+		
+		if(vehiculoRegistroInDto.getCilindraje() == 0) {
+			throw new ExcepcionNegocio(MensajesError.CILINDRAJE_NO_VALIDO);
+		}
 	}
 
 	public HistoricoParqueadero construirHistoricoParqueadero(Vehiculo vehiculo) {

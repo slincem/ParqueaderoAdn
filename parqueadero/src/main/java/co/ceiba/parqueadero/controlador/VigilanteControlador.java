@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.ceiba.parqueadero.modelo.dtos.in.VehiculoRegistroInDTO;
+import co.ceiba.parqueadero.modelo.dtos.in.VehiculoRegistroSalidaInDTO;
 import co.ceiba.parqueadero.modelo.dtos.out.VehiculoEnParqueaderoOutDTO;
 import co.ceiba.parqueadero.servicio.VigilanteServicio;
 import co.ceiba.parqueadero.servicio.excepciones.ExcepcionNegocio;
@@ -45,13 +46,26 @@ public class VigilanteControlador {
 
 		return new ResponseEntity<>(vehiculoEnParqueaderoDto, HttpStatus.OK);
 	}
-	
-	@RequestMapping(value = "/registrarVehiculo", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/registrarEntradaVehiculo", method = RequestMethod.POST)
 	public ResponseEntity<String> registrarEntradaVehiculoEnParqueadero(
 			@RequestBody VehiculoRegistroInDTO vehiculoRegistroInDto) {
-		
+
 		try {
 			vigilanteServicio.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+		} catch (ExcepcionNegocio e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+		}
+
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	}
+	
+	@RequestMapping(value = "/registrarSalidaVehiculo", method = RequestMethod.POST)
+	public ResponseEntity<String> registrarSalidaVehiculoDeParqueadero(
+			@RequestBody VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto) {
+		
+		try {
+			vigilanteServicio.registrarSalidaVehiculoDeParqueadero(vehiculoRegistroSalidaInDto);
 		} catch (ExcepcionNegocio e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 		}

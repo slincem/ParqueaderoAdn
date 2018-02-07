@@ -16,6 +16,7 @@ public class VehiculoEnParqueaderoOutDTO implements Serializable {
 	private String placa;
 	private String tipoVehiculo;
 	private int cilindraje;
+	private double valorAPagar;
 
 	public VehiculoEnParqueaderoOutDTO(Date fechaIngreso, Date fechaSalida, String placa, int cilindraje,
 			TipoVehiculo tipoVehiculo) {
@@ -69,4 +70,11 @@ public class VehiculoEnParqueaderoOutDTO implements Serializable {
 		this.tipoVehiculo = tipoVehiculo;
 	}
 
+	public double getValorAPagar() {
+		return valorAPagar;
+	}
+
+	public void setValorAPagar(double valorAPagar) {
+		this.valorAPagar = valorAPagar;
+	}
 }

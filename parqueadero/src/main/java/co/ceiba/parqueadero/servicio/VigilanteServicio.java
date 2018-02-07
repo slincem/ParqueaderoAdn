@@ -12,8 +12,6 @@ public interface VigilanteServicio {
 	
 	public VehiculoEnParqueaderoOutDTO consultarVehiculoEnParqueadero(String placa);
 	
-	public boolean comprobarExistenciaDeVehiculo(String placa);
-	
 	public boolean registrarVehiculoEnParqueadero(VehiculoRegistroInDTO vehiculoRegistroInDto);
 	
 	public boolean registrarSalidaVehiculoDeParqueadero(VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto);

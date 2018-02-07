@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import co.ceiba.parqueadero.modelo.dtos.out.VehiculoEnParqueaderoOutDTO;
 import co.ceiba.parqueadero.modelo.entidades.HistoricoParqueadero;
+import co.ceiba.parqueadero.modelo.enums.TipoVehiculo;
 
 @Repository
 public interface HistoricoParqueaderoRepositorio extends JpaRepository<HistoricoParqueadero, Long> {
@@ -35,8 +36,13 @@ public interface HistoricoParqueaderoRepositorio extends JpaRepository<Historico
 	@Modifying
 	@Transactional
 	@Query("UPDATE HistoricoParqueadero hparq set hparq.fechaSalida = :fechaSalida, "
-			+ "hparq.estado = co.ceiba.parqueadero.modelo.enums.Estado.INACTIVO "
+			+ "hparq.estado = co.ceiba.parqueadero.modelo.enums.Estado.INACTIVO, hparq.valorPagado = :valor "
 			+ "WHERE hparq.id = :id")
-	public void actualizarHistoricoDeSalidaVehiculo(@Param("id") Long id, @Param("fechaSalida") Date fechaSalida);
+	public void actualizarHistoricoDeSalidaVehiculo(@Param("id") Long id, @Param("fechaSalida") Date fechaSalida,
+			@Param("valor") Double valor);
+
+	@Query("SELECT COUNT(veh) FROM HistoricoParqueadero hparq JOIN hparq.vehiculo veh "
+			+ "WHERE veh.tipoVehiculo = :tipoVehiculo AND hparq.estado = co.ceiba.parqueadero.modelo.enums.Estado.ACTIVO")
+	public int contarVehiculosEnParqueadero(@Param("tipoVehiculo") TipoVehiculo tipoVehiculo);
 
 }

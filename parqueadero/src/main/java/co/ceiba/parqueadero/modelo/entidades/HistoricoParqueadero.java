@@ -40,6 +40,9 @@ public class HistoricoParqueadero implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_vehiculo", unique = false)
 	private Vehiculo vehiculo;
+	
+	@Column(name = "valor_pagado")
+	private Double valorPagado;
 
 	@Enumerated(EnumType.STRING)
 	private Estado estado;
@@ -84,4 +87,12 @@ public class HistoricoParqueadero implements Serializable {
 		this.estado = estado;
 	}
 
+	public Double getValorPagado() {
+		return valorPagado;
+	}
+
+	public void setValorPagado(Double valorPagado) {
+		this.valorPagado = valorPagado;
+	}
+	
 }
