@@ -1,3 +1,53 @@
-<p>
-  consultar-vehiculos works!
-</p>
+<h1>Vehiculos en parqueadero</h1>
+<hr>
+
+<div class="row">
+  <div class="col-md-12 text-right">
+    <button class="btn btn-outline-primary"
+    type="button" name="button">Registrar ingreso de vehículo</button>
+  </div>
+</div>
+
+<br>
+
+<div class="row animated fadeIn fast">
+  <div class="col-md-12">
+    <div class="table-responsive">
+
+      <table class="table">
+        <thead class="thead-inverse">
+          <tr>
+            <th>#</th>
+            <th>Placa</th>
+            <th>Cilindraje</th>
+            <th>Tipo de vehiculo</th>
+            <th>Fecha de ingreso</th>
+            <th class="text-right">Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vehiculo of vehiculosEnParqueadero; let i = index">
+            <td>{{i + 1}}</td>
+            <td>{{vehiculo.placa}}</td>
+            <td>{{vehiculo.cilindraje}}</td>
+            <td>{{vehiculo.tipoVehiculo}}</td>
+            <td>{{vehiculo.fechaIngreso}}</td>
+            <td class="text-right w230">
+              <button (click)="registrarSalida(key)" type="button" class="btn btn-outline-danger">Salida</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="(vehiculosEnParqueadero?.length === 0 || vehiculosEnParqueadero == undefined) && !loading" class="alert alert-info" role="alert">
+        <strong>No hay</strong> registros que mostrar
+      </div>
+
+      <div *ngIf="loading" class="alert alert-warning" role="alert">
+        <strong>Cargando...</strong> Por favor espere
+      </div>
+    </div>
+
+  </div>
+
+</div>
