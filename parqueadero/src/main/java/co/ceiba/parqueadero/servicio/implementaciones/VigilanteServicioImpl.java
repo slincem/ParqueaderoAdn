@@ -43,7 +43,7 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 
 	@Override
 	public VehiculoEnParqueaderoOutDTO consultarVehiculoEnParqueadero(String placa) {
-
+		placa = placa.toUpperCase();
 		VehiculoEnParqueaderoOutDTO vehiculoEnParqueaderoOutDTO = historicoParqueaderoRepositorio
 				.consultarVehiculoEnParqueadero(placa);
 		if (vehiculoEnParqueaderoOutDTO != null && vehiculoEnParqueaderoOutDTO.getFechaIngreso() != null) {
@@ -71,6 +71,8 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 		if (consultarVehiculoEnParqueadero(vehiculoRegistroInDto.getPlaca()) != null) {
 			throw new ExcepcionNegocio(MensajesError.VEHICULO_YA_ESTA_EN_PARQUEADERO);
 		}
+		
+		vehiculoRegistroInDto.setPlaca(vehiculoRegistroInDto.getPlaca().toUpperCase());
 
 		if (verificarPosibilidadDeEntradaDelVehiculoSegunPlaca(vehiculoRegistroInDto.getPlaca())) {
 			throw new ExcepcionNegocio(MensajesError.PLACA_DE_VEHICULO_NO_PERMITIDA_ESTE_DIA);
@@ -100,6 +102,8 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 		if (consultarVehiculoEnParqueadero(vehiculoRegistroSalidaInDto.getPlaca()) == null) {
 			throw new ExcepcionNegocio(MensajesError.VEHICULO_NO_ESTA_EN_PARQUEADERO);
 		}
+		
+		vehiculoRegistroSalidaInDto.setPlaca(vehiculoRegistroSalidaInDto.getPlaca().toUpperCase());
 
 		HistoricoParqueadero historicoParqueadero = historicoParqueaderoRepositorio
 				.consultarHistoricoParqueaderoVehiculoEnParqueadero(vehiculoRegistroSalidaInDto.getPlaca());

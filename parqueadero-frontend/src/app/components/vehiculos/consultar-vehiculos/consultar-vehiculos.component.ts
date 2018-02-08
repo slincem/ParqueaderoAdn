@@ -12,7 +12,6 @@ export class ConsultarVehiculosComponent implements OnInit {
   loading: boolean = true;
 
   constructor(private _vehiculosService: VehiculosService) {
-    console.log("...");
     this._vehiculosService.getVehiculos().subscribe(vehiculosList => {
       console.log("Vehiculos", vehiculosList);
       this.vehiculosEnParqueadero = vehiculosList;

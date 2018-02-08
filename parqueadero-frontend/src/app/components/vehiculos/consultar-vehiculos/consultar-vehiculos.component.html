@@ -1,8 +1,8 @@
-<h1>Vehiculos en parqueadero</h1>
+<h1>Vehículos en parqueadero</h1>
 <hr>
-
+registrarVehiculo
 <div class="row">
-  <div class="col-md-12 text-right">
+  <div [routerLink]="['/registrarVehiculo']" class="col-md-12 text-right">
     <button class="btn btn-outline-primary"
     type="button" name="button">Registrar ingreso de vehículo</button>
   </div>
@@ -20,7 +20,7 @@
             <th>#</th>
             <th>Placa</th>
             <th>Cilindraje</th>
-            <th>Tipo de vehiculo</th>
+            <th>Tipo de vehículo</th>
             <th>Fecha de ingreso</th>
             <th class="text-right">Opciones</th>
           </tr>
@@ -30,7 +30,8 @@
             <td>{{i + 1}}</td>
             <td>{{vehiculo.placa}}</td>
             <td>{{vehiculo.cilindraje}}</td>
-            <td>{{vehiculo.tipoVehiculo}}</td>
+            <td *ngIf="vehiculo.tipoVehiculo == 'Carro'"><i class="fas fa-car fa-2x"></i></td>
+            <td *ngIf="vehiculo.tipoVehiculo == 'Moto'"><i class="fas fa-motorcycle fa-2x"></i></td>
             <td>{{vehiculo.fechaIngreso}}</td>
             <td class="text-right w230">
               <button (click)="registrarSalida(key)" type="button" class="btn btn-outline-danger">Salida</button>

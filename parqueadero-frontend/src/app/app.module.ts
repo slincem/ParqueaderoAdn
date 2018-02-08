@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 
 import {APP_ROUTING} from './app.routes';
@@ -19,8 +20,10 @@ import {VehiculosService} from './services/vehiculos.service';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     APP_ROUTING
   ],
   providers: [HttpClientModule, VehiculosService],
