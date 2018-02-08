@@ -68,14 +68,14 @@ public class VigilanteControlador {
 	@RequestMapping(value = "/registrarSalidaVehiculo", method = RequestMethod.POST)
 	public ResponseEntity<String> registrarSalidaVehiculoDeParqueadero(
 			@RequestBody VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto) {
-		
+		String valorParqueadero;
 		try {
-			vigilanteServicio.registrarSalidaVehiculoDeParqueadero(vehiculoRegistroSalidaInDto);
+			valorParqueadero = vigilanteServicio.registrarSalidaVehiculoDeParqueadero(vehiculoRegistroSalidaInDto).toString();
 		} catch (ExcepcionNegocio e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 		}
 		
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(valorParqueadero, HttpStatus.ACCEPTED);
 	}
 
 }

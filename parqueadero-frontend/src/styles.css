@@ -41,3 +41,8 @@
 .fadeIn {
   animation-name: fadeIn;
 }
+
+.input-buttons {
+  display: flex;
+  justify-content: space-between;
+}

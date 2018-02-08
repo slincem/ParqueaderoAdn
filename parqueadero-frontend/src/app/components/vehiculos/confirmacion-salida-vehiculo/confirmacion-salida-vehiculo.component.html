@@ -4,10 +4,10 @@
     <label for="" class="form-control">Placa: {{vehiculoConsultado?.placa}}</label>
     <label for="" class="form-control">Cilindraje: {{vehiculoConsultado?.cilindraje}}</label>
     <label for="" class="form-control">Tipo de vehículo: {{vehiculoConsultado?.tipoVehiculo}}</label>
-    <label for="" class="form-control">Valor a cancelar: {{vehiculoConsultado?.valorAPagar}}</label>
+    <label for="" class="form-control">Valor a cancelar hasta este momento: {{vehiculoConsultado?.valorAPagar}}</label>
   </div>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions class="input-buttons">
   <button  (click)="registrarSalida()" class="btn btn-primary" tabindex="1">Registrar Salida</button>
-  <button  (click)="cancelar()" class="btn btn-danger" mat-dialog-close tabindex="-1">Cancelar</button>
+  <button  (click)="cancelar()" class="btn btn-danger pull-right" mat-dialog-close tabindex="-1">Cancelar</button>
 </mat-dialog-actions>

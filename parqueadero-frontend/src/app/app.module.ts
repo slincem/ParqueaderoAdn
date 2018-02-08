@@ -14,13 +14,15 @@ import { ConsultarVehiculosComponent } from './components/vehiculos/consultar-ve
 
 import { VehiculosService } from './services/vehiculos.service';
 import { ConfirmacionSalidaVehiculoComponent } from './components/vehiculos/confirmacion-salida-vehiculo/confirmacion-salida-vehiculo.component';
+import { FacturaSalidaVehiculoComponent } from './components/vehiculos/factura-salida-vehiculo/factura-salida-vehiculo.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RegistrarVehiculoComponent,
     ConsultarVehiculosComponent,
-    ConfirmacionSalidaVehiculoComponent
+    ConfirmacionSalidaVehiculoComponent,
+    FacturaSalidaVehiculoComponent
   ],
   imports: [
     BrowserModule,
@@ -36,6 +38,6 @@ import { ConfirmacionSalidaVehiculoComponent } from './components/vehiculos/conf
   ],
   providers: [HttpClientModule, VehiculosService],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmacionSalidaVehiculoComponent]
+  entryComponents: [ConfirmacionSalidaVehiculoComponent, FacturaSalidaVehiculoComponent]
 })
 export class AppModule { }

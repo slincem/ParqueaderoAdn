@@ -97,7 +97,7 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 	}
 
 	@Override
-	public boolean registrarSalidaVehiculoDeParqueadero(VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto) {
+	public Double registrarSalidaVehiculoDeParqueadero(VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto) {
 
 		if (consultarVehiculoEnParqueadero(vehiculoRegistroSalidaInDto.getPlaca()) == null) {
 			throw new ExcepcionNegocio(MensajesError.VEHICULO_NO_ESTA_EN_PARQUEADERO);
@@ -119,7 +119,7 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 
 		historicoParqueaderoRepositorio.actualizarHistoricoDeSalidaVehiculo(historicoParqueadero.getId(), fechaSalida,
 				valorAPagar);
-		return true;
+		return valorAPagar;
 	}
 
 	public Vehiculo registrarVehiculoPorPrimeraVez(VehiculoRegistroInDTO vehiculoRegistroInDto) {

@@ -14,6 +14,6 @@ public interface VigilanteServicio {
 	
 	public boolean registrarVehiculoEnParqueadero(VehiculoRegistroInDTO vehiculoRegistroInDto);
 	
-	public boolean registrarSalidaVehiculoDeParqueadero(VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto);
+	public Double registrarSalidaVehiculoDeParqueadero(VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto);
 
 }
