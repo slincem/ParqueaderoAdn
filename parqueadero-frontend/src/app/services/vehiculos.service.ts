@@ -7,7 +7,9 @@ import 'rxjs/Rx';
 export class VehiculosService {
 
   vehiculosURL: string = "http://localhost:8080/parqueadero/listarVehiculos";
-  registroVehiculo: string = "http://localhost:8080/parqueadero/registrarEntradaVehiculo";
+  buscarVehiculoURL: string = "http://localhost:8080/parqueadero/buscarVehiculo";
+  registroVehiculoURL: string = "http://localhost:8080/parqueadero/registrarEntradaVehiculo";
+  saidaVehiculoURL: string = "http://localhost:8080/parqueadero/registrarSalidaVehiculo"
 
   constructor(public http: HttpClient) { }
 
@@ -22,12 +24,40 @@ export class VehiculosService {
     );
   }
 
+  getVehiculo(placa) {
+    let urlBusquedaVehiculo = `${this.buscarVehiculoURL}/${placa}`;
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    return this.http.get(urlBusquedaVehiculo, { headers }).map(
+      (res: any) => {
+        return res;
+      }
+    );
+  }
+
   registrarVehiculo(vehiculo: Vehiculo) {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
 
-    return this.http.post(this.registroVehiculo, vehiculo, { headers }).map(
+    return this.http.post(this.registroVehiculoURL, vehiculo, { headers }).map(
+      (res: any) => {
+        return res;
+      }
+    )
+  }
+
+  registrarSalidaVehiculo(placa) {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    let vehiculoSalida = {
+      placa: placa
+    }
+
+    return this.http.post(this.saidaVehiculoURL, vehiculoSalida, { headers }).map(
       (res: any) => {
         return res;
       }

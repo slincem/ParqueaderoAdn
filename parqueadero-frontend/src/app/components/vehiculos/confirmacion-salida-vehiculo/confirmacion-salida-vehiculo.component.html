@@ -1,0 +1,13 @@
+<h1 mat-dialog-title style="text-align: center"> Información del vehículo </h1>
+<mat-dialog-content>
+  <div class="form-group row">
+    <label for="" class="form-control">Placa: {{vehiculoConsultado?.placa}}</label>
+    <label for="" class="form-control">Cilindraje: {{vehiculoConsultado?.cilindraje}}</label>
+    <label for="" class="form-control">Tipo de vehículo: {{vehiculoConsultado?.tipoVehiculo}}</label>
+    <label for="" class="form-control">Valor a cancelar: {{vehiculoConsultado?.valorAPagar}}</label>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button  (click)="registrarSalida()" class="btn btn-primary" tabindex="1">Registrar Salida</button>
+  <button  (click)="cancelar()" class="btn btn-danger" mat-dialog-close tabindex="-1">Cancelar</button>
+</mat-dialog-actions>

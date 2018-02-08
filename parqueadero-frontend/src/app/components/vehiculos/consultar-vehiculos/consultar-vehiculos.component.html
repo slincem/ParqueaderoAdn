@@ -1,6 +1,5 @@
 <h1>Vehículos en parqueadero</h1>
 <hr>
-registrarVehiculo
 <div class="row">
   <div [routerLink]="['/registrarVehiculo']" class="col-md-12 text-right">
     <button class="btn btn-outline-primary"
@@ -34,7 +33,7 @@ registrarVehiculo
             <td *ngIf="vehiculo.tipoVehiculo == 'Moto'"><i class="fas fa-motorcycle fa-2x"></i></td>
             <td>{{vehiculo.fechaIngreso}}</td>
             <td class="text-right w230">
-              <button (click)="registrarSalida(key)" type="button" class="btn btn-outline-danger">Salida</button>
+              <button (click)="registrarSalida(vehiculo.placa)" type="button" class="btn btn-outline-danger">Salida</button>
             </td>
           </tr>
         </tbody>

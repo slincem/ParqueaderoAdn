@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import {Vehiculo} from '../../../interfaces/vehiculo.interface';
-import {VehiculosService} from '../../../services/vehiculos.service';
+import { Vehiculo } from '../../../interfaces/vehiculo.interface';
+import { VehiculosService } from '../../../services/vehiculos.service';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-registrar-vehiculo',
@@ -10,29 +11,33 @@ import {VehiculosService} from '../../../services/vehiculos.service';
 })
 export class RegistrarVehiculoComponent implements OnInit {
 
+  duracionSnack = 5000;
   formulario: FormGroup;
   vehiculo: Vehiculo = {
-    placa : "",
-    cilindraje : "",
-    tipoVehiculo : "Carro"
+    placa: "",
+    cilindraje: "",
+    tipoVehiculo: "Carro"
   }
 
-  constructor(private _vehiculosService: VehiculosService) {
+  constructor(private _vehiculosService: VehiculosService,
+    private snackBar: MatSnackBar) {
   }
 
   registrarVehiculo() {
 
-    console.log("vehiculoOk", this.vehiculo);
-
     this._vehiculosService.registrarVehiculo(this.vehiculo).subscribe(respuesta => {
-      console.log(respuesta);
-      this.formulario.reset({tipoVehiculo:"Carro"});
-    } , error => console.log("Error", error));
+      this.snackBar.open("Registro exitoso", 'Cerrar', {
+        duration: this.duracionSnack
+      });
+      this.formulario.reset({ tipoVehiculo: "Carro" });
+    }, error => this.snackBar.open(error.error, 'Cerrar', {
+      duration: this.duracionSnack
+    }));
 
   }
 
   nuevoVehiculo() {
-    this.formulario.reset({tipoVehiculo:"Carro"});
+    this.formulario.reset({ tipoVehiculo: "Carro" });
   }
 
   ngOnInit() {
