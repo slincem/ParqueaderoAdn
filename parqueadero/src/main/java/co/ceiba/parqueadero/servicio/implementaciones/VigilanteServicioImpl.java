@@ -1,8 +1,6 @@
 package co.ceiba.parqueadero.servicio.implementaciones;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -74,7 +72,7 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 		
 		vehiculoRegistroInDto.setPlaca(vehiculoRegistroInDto.getPlaca().toUpperCase());
 
-		if (verificarPosibilidadDeEntradaDelVehiculoSegunPlaca(vehiculoRegistroInDto.getPlaca())) {
+		if (!esPosibleEntradaDelVehiculoSegunPlaca(vehiculoRegistroInDto.getPlaca(), new Date())) {
 			throw new ExcepcionNegocio(MensajesError.PLACA_DE_VEHICULO_NO_PERMITIDA_ESTE_DIA);
 		}
 
@@ -157,21 +155,20 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 		return vehiculoEncontrado != null;
 	}
 
-	public boolean verificarInicioDePlacaPorLetraRegistrinda(String placa) {
-		return placa.charAt(0) != Parqueadero.LETRA_RESTRINGIDA;
+	public boolean empiezaPorLetraRegistrinda(String placa) {
+		return placa.charAt(0) == Parqueadero.LETRA_RESTRINGIDA;
 	}
 
-	public boolean verificarDiasDeRestriccionDeLetra() {
-		Date fechaActual = new Date();
+	public boolean verificarDiasDeRestriccionDeLetra(Date fechaActual) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(fechaActual);
 		int diaDeHoy = calendar.get(Calendar.DAY_OF_WEEK);
 		return diaDeHoy == Calendar.SUNDAY || diaDeHoy == Calendar.MONDAY;
 	}
 
-	public boolean verificarPosibilidadDeEntradaDelVehiculoSegunPlaca(String placa) {
-		return (verificarInicioDePlacaPorLetraRegistrinda(placa) && verificarDiasDeRestriccionDeLetra())
-				|| !(verificarInicioDePlacaPorLetraRegistrinda(placa));
+	public boolean esPosibleEntradaDelVehiculoSegunPlaca(String placa, Date fechaActual) {
+		return (empiezaPorLetraRegistrinda(placa) && verificarDiasDeRestriccionDeLetra(fechaActual))
+				|| !(empiezaPorLetraRegistrinda(placa));
 	}
 
 	public boolean verificarCupoParaVehiculo(TipoVehiculo tipoVehiculo) {

@@ -29,6 +29,9 @@ public class VehiculoEnParqueaderoOutDTO implements Serializable {
 		this.cilindraje = cilindraje;
 		this.tipoVehiculo = tipoVehiculo.getValue();
 	}
+	
+	public VehiculoEnParqueaderoOutDTO() {
+	}
 
 	public String getFechaIngreso() {
 		return fechaIngreso;
