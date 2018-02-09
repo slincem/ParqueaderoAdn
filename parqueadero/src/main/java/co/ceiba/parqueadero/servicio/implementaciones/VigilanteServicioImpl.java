@@ -122,9 +122,7 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 
 	public Vehiculo registrarVehiculoPorPrimeraVez(VehiculoRegistroInDTO vehiculoRegistroInDto) {
 		Vehiculo vehiculo = convertirVehiculoRegistroInDtoAVehiculo(vehiculoRegistroInDto);
-		vehiculoRepositorio.save(vehiculo);
-
-		return vehiculo;
+		return vehiculoRepositorio.save(vehiculo);
 	}
 
 	public Vehiculo actualizarDatosVehiculo(VehiculoRegistroInDTO vehiculoRegistroInDto) {
@@ -189,7 +187,7 @@ public class VigilanteServicioImpl implements VigilanteServicio {
 
 		if (horasParqueado >= Parqueadero.HORAS_INICIO_PARA_COBRAR_POR_DIA) {
 			diasParqueado++;
-			horasParqueado = (long) (horasParqueado - Parqueadero.HORAS_INICIO_PARA_COBRAR_POR_DIA);
+			horasParqueado = -1;
 		}
 
 		horasParqueado++;

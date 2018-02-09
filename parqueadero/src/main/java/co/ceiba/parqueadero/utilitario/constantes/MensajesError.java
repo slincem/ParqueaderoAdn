@@ -12,7 +12,7 @@ public class MensajesError {
 
 	public static final String NO_HAY_DISPONIBILIDAD_DE_CUPO = "No hay cupo disponible para este vehiculo";
 
-	public static final String TIPO_VEHICULO_NO_VALIDO = "Este tipo de vehículo de inválido";
+	public static final String TIPO_VEHICULO_NO_VALIDO = "Este tipo de vehículo es inválido";
 
 	public static final String PLACA_NO_VALIDA = "Esta placa tiene un formato no válido, sólo se permite un dato alfanúmerico";
 	

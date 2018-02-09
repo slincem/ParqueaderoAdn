@@ -49,6 +49,7 @@ public class VehiculoEnParqueaderoOutDTOTestDataBuilder {
 
 	public VehiculoEnParqueaderoOutDTO build() {
 		VehiculoEnParqueaderoOutDTO vehiculoEnParqueaderoOutDto = new VehiculoEnParqueaderoOutDTO();
+		vehiculoEnParqueaderoOutDto.setPlaca(this.placa);
 		vehiculoEnParqueaderoOutDto.setFechaIngreso(this.fechaIngreso);
 		vehiculoEnParqueaderoOutDto.setFechaSalida(this.fechaSalida);
 		vehiculoEnParqueaderoOutDto.setTipoVehiculo(this.tipoVehiculo);
