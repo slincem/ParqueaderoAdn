@@ -1,257 +1,186 @@
 package co.ceiba.parqueadero.integracion.servicio.implementaciones;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.text.ParseException;
-import java.util.Date;
+import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import co.ceiba.parqueadero.databuilder.VehiculoRegistroInDTOTestDataBuilder;
-import co.ceiba.parqueadero.databuilder.VehiculoTestDataBuilder;
+import co.ceiba.parqueadero.databuilder.VehiculoRegistroSalidaInDTOTestDataBuilder;
 import co.ceiba.parqueadero.modelo.dtos.in.VehiculoRegistroInDTO;
+import co.ceiba.parqueadero.modelo.dtos.in.VehiculoRegistroSalidaInDTO;
+import co.ceiba.parqueadero.modelo.dtos.out.VehiculoEnParqueaderoOutDTO;
 import co.ceiba.parqueadero.modelo.entidades.HistoricoParqueadero;
-import co.ceiba.parqueadero.modelo.entidades.Vehiculo;
-import co.ceiba.parqueadero.modelo.enums.TipoVehiculo;
 import co.ceiba.parqueadero.repositorio.HistoricoParqueaderoRepositorio;
-import co.ceiba.parqueadero.repositorio.VehiculoRepositorio;
+import co.ceiba.parqueadero.servicio.entidadesnegocio.Parqueadero;
 import co.ceiba.parqueadero.servicio.excepciones.ExcepcionNegocio;
 import co.ceiba.parqueadero.servicio.implementaciones.VigilanteServicioImpl;
-import co.ceiba.parqueadero.utilitario.FechaUtilitario;
+import co.ceiba.parqueadero.utilitario.constantes.ConstantesNumeros;
 import co.ceiba.parqueadero.utilitario.constantes.MensajesError;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Transactional
 public class VigilanteServicioImplTest {
 
-	@InjectMocks
-	private VigilanteServicioImpl vigilanteServicioImpl;
+	@Autowired
+	VigilanteServicioImpl vigilanteServicioImpl;
 
-	@Mock
-	private HistoricoParqueaderoRepositorio historicoParqueaderoRepositorio;
+	@Autowired
+	HistoricoParqueaderoRepositorio historicoParqueaderoRepositorio;
 
-	@Mock
-	private VehiculoRepositorio vehiculoRepositorio;
-
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
+	private static final String PLACA_NO_EMPIEZA_POR_A = "BCA001";
 
 	@Test
 	public void consultarVehiculosEnParqueaderoTest() {
-
-		// List<Vehiculo>
-		// Mockito.when(historicoParqueaderoRepositorio.consultarVehiculosEnParqueadero()).thenReturn(value)
-	}
-
-	// Varios parametros
-	@Test
-	public void verificarInicioDePlacaPorLetraRegistrindaTest() {
-		// // Arrange
-		// VigilanteServicioImpl vigilanteServicioImpl = new VigilanteServicioImpl();
+		// Arrange
+		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+				.conPlaca(PLACA_NO_EMPIEZA_POR_A).build();
+		vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
 
 		// Act
-		boolean empiezaPorA = vigilanteServicioImpl.empiezaPorLetraRegistrinda("ABC001");
-		// Assert
-		Assert.assertTrue(empiezaPorA);
-	}
+		List<VehiculoEnParqueaderoOutDTO> vehiculosEnParqueaderoList = vigilanteServicioImpl
+				.consultarVehiculosEnParqueadero();
 
-	// Varios parametros
-	@Test
-	public void verificarDiasDeRestriccionDeLetraTest() {
-		// Arrange
-		// VigilanteServicioImpl viliganteServicioImpl = new VigilanteServicioImpl();
-
-		Date fechaDomingo = null;
-		try {
-			fechaDomingo = FechaUtilitario.formatearStringAFecha("04/02/2018 12:01:01");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		// Act
-		boolean esDomingoOLunes = vigilanteServicioImpl.verificarDiasDeRestriccionDeLetra(fechaDomingo);
-		// Assert
-		Assert.assertTrue(esDomingoOLunes);
-	}
-
-	// Varios parametros
-	@Test
-	public void esPosibleEntradaDelVehiculoSegunPlacaTest() {
-		// Arrange
-		// VigilanteServicioImpl viliganteServicioImpl = new VigilanteServicioImpl();
-
-		String placa = "ABC001";
-
-		Date fechaDomingo = null;
-		try {
-			fechaDomingo = FechaUtilitario.formatearStringAFecha("04/02/2018 12:01:01");
-		} catch (ParseException e) {
-			e.printStackTrace();
+		if (vehiculosEnParqueaderoList == null || vehiculosEnParqueaderoList.isEmpty()) {
+			fail();
 		}
 
-		// Act
-		boolean vehiculoPuedeIngresar = vigilanteServicioImpl.esPosibleEntradaDelVehiculoSegunPlaca(placa,
-				fechaDomingo);
-
 		// Assert
-		Assert.assertTrue(vehiculoPuedeIngresar);
+		Assert.assertEquals(vehiculoRegistroInDto.getPlaca(), vehiculosEnParqueaderoList.get(0).getPlaca());
 	}
 
 	@Test
-	public void comprobarExistenciaDeVehiculoTest() {
-		// VigilanteServicioImpl viliganteServicioImpl = new VigilanteServicioImpl();
-
+	public void consultarVehiculoEnParqueaderoTest() {
 		// Arrange
-		Mockito.when(vehiculoRepositorio.findByPlaca(Mockito.anyString())).thenReturn(new Vehiculo());
+		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+				.conPlaca(PLACA_NO_EMPIEZA_POR_A).build();
+		vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
 
 		// Act
-		boolean vehiculoFueEncontrado = vigilanteServicioImpl.comprobarExistenciaDeVehiculo("ABC001");
+		VehiculoEnParqueaderoOutDTO vehiculoEnParqueaderoOutDto = vigilanteServicioImpl
+				.consultarVehiculoEnParqueadero(PLACA_NO_EMPIEZA_POR_A);
+
+		if (vehiculoEnParqueaderoOutDto == null) {
+			fail();
+		}
 
 		// Assert
-		Assert.assertTrue(vehiculoFueEncontrado);
-
+		Assert.assertEquals(PLACA_NO_EMPIEZA_POR_A, vehiculoEnParqueaderoOutDto.getPlaca());
 	}
 
 	@Test
-	public void convertirVehiculoRegistroInDtoAVehiculoTest() {
+	public void registrarVehiculoEnParqueaderoTest() {
+		// Arrange
+		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+				.conPlaca(PLACA_NO_EMPIEZA_POR_A).build();
+		vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+
+		// Act
+		HistoricoParqueadero historicoParqueadero = historicoParqueaderoRepositorio
+				.consultarHistoricoParqueaderoVehiculoEnParqueadero(vehiculoRegistroInDto.getPlaca());
+
+		// Assert
+		assertNotNull(historicoParqueadero);
+	}
+
+	@Test
+	public void registrarVehiculoEnParqueaderoTestErrorVehiculoYaSeEncuentra() {
 		// Arrange
 		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder().build();
-
-		// Act
-		Vehiculo vehiculo = vigilanteServicioImpl.convertirVehiculoRegistroInDtoAVehiculo(vehiculoRegistroInDto);
-		boolean vehiculoYDtoSonIguales = true;
-		if (vehiculo.getCilindraje() != vehiculoRegistroInDto.getCilindraje()
-				|| vehiculo.getPlaca() != vehiculoRegistroInDto.getPlaca()
-				|| !vehiculo.getTipoVehiculo().getValue().equals(vehiculoRegistroInDto.getTipoVehiculo()))
-			vehiculoYDtoSonIguales = false;
-
-		// Assert
-		Assert.assertTrue(vehiculoYDtoSonIguales);
-	}
-
-	// Varios parametros
-	@Test
-	public void verificarCupoParaVehiculoTest() {
-		// Arrange
-		Mockito.when(historicoParqueaderoRepositorio.contarVehiculosEnParqueadero(Mockito.any())).thenReturn(20);
-
-		// Act
-		boolean hayCupoParaVehiculo = vigilanteServicioImpl.verificarCupoParaVehiculo(TipoVehiculo.CARRO);
-
-		// Assert
-		Assert.assertFalse(hayCupoParaVehiculo);
-	}
-
-	// Varios parametros
-	@Test
-	public void calcularValorAPagarEnParqueaderoTest() {
-		// Arrange
-		Date fechaIngreso = null;
-		Date fechaSalida = null;
+		vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
 		try {
-			fechaIngreso = FechaUtilitario.formatearStringAFecha("09/02/2018 08:00:00");
-			fechaSalida = FechaUtilitario.formatearStringAFecha("09/02/2018 17:05:00");
-		} catch (ParseException e) {
-			e.printStackTrace();
+			// Act
+			vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+			fail();
+		} catch (ExcepcionNegocio e) {
+			// Assert
+			Assert.assertEquals(MensajesError.VEHICULO_YA_ESTA_EN_PARQUEADERO, e.getMessage());
 		}
+	}
+
+	@Test
+	public void registrarVehiculoEnParqueaderoTestErrorCupoCarro() {
+		// Arrange
+		for (int i = ConstantesNumeros.NUMERO_CERO; i < Parqueadero.CANTIDAD_MAXIMA_DE_CARROS_ADMITIDOS; i++) {
+			VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+					.conPlaca(PLACA_NO_EMPIEZA_POR_A + i).build();
+			vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+		}
+
+		try {
+			// Act
+			VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+					.conPlaca(PLACA_NO_EMPIEZA_POR_A + 50).build();
+			vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+		} catch (Exception e) {
+			// Assert
+			Assert.assertEquals(MensajesError.NO_HAY_DISPONIBILIDAD_DE_CUPO, e.getMessage());
+		}
+	}
+
+	@Test
+	public void registrarVehiculoEnParqueaderoTestErrorCupoMoto() {
+		// Arrange
+		for (int i = ConstantesNumeros.NUMERO_CERO; i < Parqueadero.CANTIDAD_MAXIMA_DE_MOTOS_ADMITIDAS; i++) {
+			VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+					.conPlaca(PLACA_NO_EMPIEZA_POR_A + i).conTipoVehiculo("Moto").build();
+			vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+		}
+
+		try {
+			// Act
+			VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+					.conPlaca(PLACA_NO_EMPIEZA_POR_A + 50).conTipoVehiculo("Moto").build();
+			vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+		} catch (Exception e) {
+			// Assert
+			Assert.assertEquals(MensajesError.NO_HAY_DISPONIBILIDAD_DE_CUPO, e.getMessage());
+		}
+	}
+	
+	@Test
+	public void registrarSalidaVehiculoDeParqueaderoTest() {
+		// Arrange
+		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
+				.conPlaca(PLACA_NO_EMPIEZA_POR_A).build();
+		vigilanteServicioImpl.registrarVehiculoEnParqueadero(vehiculoRegistroInDto);
+
+		VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDTO = new VehiculoRegistroSalidaInDTOTestDataBuilder()
+				.conPlaca(PLACA_NO_EMPIEZA_POR_A).build();
+
 		double precision = 001;
 
 		// Act
-		double valorACancelar = vigilanteServicioImpl.calcularValorAPagarEnParqueadero(fechaIngreso, fechaSalida,
-				TipoVehiculo.MOTO, 650);
+		double valorAPagar = vigilanteServicioImpl.registrarSalidaVehiculoDeParqueadero(vehiculoRegistroSalidaInDTO);
 
 		// Assert
-		assertEquals(6000, valorACancelar, precision);
+		Assert.assertEquals(Parqueadero.VALOR_HORA_CARRO, valorAPagar, precision);
+
 	}
 
-	// Varios parametros
 	@Test
-	public void validarDatosDeRegistroTestErrorTipoVehiculo() {
+	public void registrarSalidaVehiculoDeParqueaderoTestErrorVehiculoNoEstaEnParqueadero() {
 		// Arrange
-		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder()
-				.conTipoVehiculo("Avión").build();
+		VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDTO = new VehiculoRegistroSalidaInDTOTestDataBuilder()
+				.conPlaca(PLACA_NO_EMPIEZA_POR_A).build();
 
 		try {
 			// Act
-			vigilanteServicioImpl.validarDatosDeRegistro(vehiculoRegistroInDto);
+			vigilanteServicioImpl.registrarSalidaVehiculoDeParqueadero(vehiculoRegistroSalidaInDTO);
 			fail();
-		} catch (ExcepcionNegocio excepcion) {
+		} catch (ExcepcionNegocio e) {
 			// Assert
-			Assert.assertEquals(MensajesError.TIPO_VEHICULO_NO_VALIDO, excepcion.getMessage());
-		}
-
-	}
-	
-	// Varios parametros
-	@Test
-	public void validarDatosDeRegistroTestErrorPlaca() {
-		// Arrange
-		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder().conPlaca("-BCD00-")
-				.build();
-		try {
-			// Act
-			vigilanteServicioImpl.validarDatosDeRegistro(vehiculoRegistroInDto);
-			fail();
-		} catch (ExcepcionNegocio excepcion) {
-			// Assert
-			Assert.assertEquals(MensajesError.PLACA_NO_VALIDA, excepcion.getMessage());
+			Assert.assertEquals(MensajesError.VEHICULO_NO_ESTA_EN_PARQUEADERO, e.getMessage());
 		}
 	}
-	
-	@Test
-	public void validarDatosDeRegistroTestErrorCilindraje() {
-		// Arrange
-		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder().conCilindraje(0)
-				.build();
-		try {
-			// Act
-			vigilanteServicioImpl.validarDatosDeRegistro(vehiculoRegistroInDto);
-			fail();
-		} catch (ExcepcionNegocio excepcion) {
-			// Assert
-			Assert.assertEquals(MensajesError.CILINDRAJE_NO_VALIDO, excepcion.getMessage());
-		}
-	}
-	
-	@Test
-	public void construirHistoricoParqueadero() {
-		//Arrange
-		Vehiculo vehiculo = new VehiculoTestDataBuilder().build();
-		
-		//Act
-		HistoricoParqueadero historicoParqueadero = vigilanteServicioImpl.construirHistoricoParqueadero(vehiculo);
-		
-		//Assert
-		Assert.assertNotNull(historicoParqueadero);
-	}
-	
-	@Test
-	public void registrarVehiculoPorPrimeraVezTest() {
-		
-		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder().build();
-		Mockito.when(vehiculoRepositorio.save(Mockito.any(Vehiculo.class))).thenReturn(new Vehiculo());
-		
-		Vehiculo vehiculo = vigilanteServicioImpl.registrarVehiculoPorPrimeraVez(vehiculoRegistroInDto);
-		Assert.assertNotNull(vehiculo);
-	}
-	
-	@Test
-	public void actualizarDatosVehiculoTest() {
-		
-		VehiculoRegistroInDTO vehiculoRegistroInDto = new VehiculoRegistroInDTOTestDataBuilder().build();
-		Mockito.doNothing().when(vehiculoRepositorio);
-		
-		Vehiculo vehiculo = vigilanteServicioImpl.actualizarDatosVehiculo(vehiculoRegistroInDto);
-		Assert.assertNotNull(vehiculo);
-	}
-
 }

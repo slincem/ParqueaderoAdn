@@ -1,0 +1,14 @@
+sonar.projectKey=ParqueaderoAdn
+sonar.projectName=ParqueaderoAdn
+sonar.projectVersion=1.0
+sonar.projectBaseDir=../checkoutcode
+sonar.sources=../checkoutcode/parqueadero/src/main/java
+sonar.scm.disabled=false
+sonar.tests=../checkoutcode/parqueadero/src/test/java
+sonar.jacoco.reportMissing.force.zero=false
+sonar.jacoco.reportPath=../checkoutcode/parqueadero/jacoco/jacocoTest.exec
+sonar.jacoco.itReportPath=../checkoutcode/parqueadero/jacoco/jacocoTest.exec
+sonar.junit.reportsPath=../checkoutcode/parqueadero/jacoco/test-results
+sonar.java.binaries=../checkoutcode/parqueadero/build/classes
+sonar.language=java
+sonar.sourceEncoding=UTF-8
