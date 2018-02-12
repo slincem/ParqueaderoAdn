@@ -4,18 +4,16 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import co.ceiba.parqueadero.modelo.dtos.VehiculoDTO;
 import co.ceiba.parqueadero.modelo.enums.TipoVehiculo;
 import co.ceiba.parqueadero.utilitario.FechaUtilitario;
 
-public class VehiculoEnParqueaderoOutDTO implements Serializable {
+public class VehiculoEnParqueaderoOutDTO extends VehiculoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String fechaIngreso;
 	private String fechaSalida;
-	private String placa;
-	private String tipoVehiculo;
-	private int cilindraje;
 	private double valorAPagar;
 
 	public VehiculoEnParqueaderoOutDTO(Date fechaIngreso, Date fechaSalida, String placa, int cilindraje,
@@ -47,30 +45,6 @@ public class VehiculoEnParqueaderoOutDTO implements Serializable {
 
 	public void setFechaSalida(String fechaSalida) {
 		this.fechaSalida = fechaSalida;
-	}
-
-	public String getPlaca() {
-		return placa;
-	}
-
-	public void setPlaca(String placa) {
-		this.placa = placa;
-	}
-
-	public int getCilindraje() {
-		return cilindraje;
-	}
-
-	public void setCilindraje(int cilindraje) {
-		this.cilindraje = cilindraje;
-	}
-
-	public String getTipoVehiculo() {
-		return tipoVehiculo;
-	}
-
-	public void setTipoVehiculo(String tipoVehiculo) {
-		this.tipoVehiculo = tipoVehiculo;
 	}
 
 	public double getValorAPagar() {
