@@ -24,6 +24,7 @@ import co.ceiba.parqueadero.modelo.entidades.Vehiculo;
 import co.ceiba.parqueadero.modelo.enums.TipoVehiculo;
 import co.ceiba.parqueadero.repositorio.HistoricoParqueaderoRepositorio;
 import co.ceiba.parqueadero.repositorio.VehiculoRepositorio;
+import co.ceiba.parqueadero.servicio.entidadesnegocio.Parqueadero;
 import co.ceiba.parqueadero.servicio.excepciones.ExcepcionNegocio;
 import co.ceiba.parqueadero.servicio.implementaciones.VigilanteServicioImpl;
 import co.ceiba.parqueadero.utilitario.FechaUtilitario;
@@ -142,13 +143,13 @@ public class VigilanteServicioImplTest {
 	@Test
 	public void verificarCupoParaVehiculoTest() {
 		// Arrange
-		Mockito.when(historicoParqueaderoRepositorio.contarVehiculosEnParqueadero(Mockito.any())).thenReturn(20);
+		Mockito.when(historicoParqueaderoRepositorio.contarVehiculosEnParqueadero(Mockito.any())).thenReturn(Parqueadero.CANTIDAD_MAXIMA_DE_CARROS_ADMITIDOS - 1);
 
 		// Act
 		boolean hayCupoParaVehiculo = vigilanteServicioImpl.verificarCupoParaVehiculo(TipoVehiculo.CARRO);
 
 		// Assert
-		Assert.assertFalse(hayCupoParaVehiculo);
+		Assert.assertTrue(hayCupoParaVehiculo);
 	}
 	
 	@Test
