@@ -1,14 +1,25 @@
-import { AppPage } from './app.po';
+import { RegistroPage } from './app.po';
+import { ListaVehiculosPage } from './lista-vehiculos.po';
 
 describe('parqueadero-frontend App', () => {
-  let page: AppPage;
+  let registroPage: RegistroPage;
+  let vehiculosPage: ListaVehiculosPage;
 
   beforeEach(() => {
-    page = new AppPage();
+    registroPage = new RegistroPage();
+    vehiculosPage = new ListaVehiculosPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!');
+  it('Registrar vehiculo en el parqueadero', () => {
+    registroPage.navigateTo();
+    let placa = "CBA001";
+    registroPage.getInputPlaca().sendKeys(placa);
+    registroPage.getInputCilindraje().sendKeys(860);
+    registroPage.getInputTipoVehiculo().sendKeys("Moto");
+
+    registroPage.getButtonRegistrar().click();
+
+    registroPage.getButtonVerListaVehiculos().click();
+    expect(vehiculosPage.getTableCellsElement().get(1).getText()).toEqual(placa);
   });
 });

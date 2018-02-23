@@ -25,7 +25,7 @@ public class VigilanteControlador {
 	@Autowired
 	private VigilanteServicio vigilanteServicio;
 	
-	@CrossOrigin(value="http://localhost:4200")
+	@CrossOrigin(value="*")
 	@RequestMapping(value = "/listarVehiculos", method = RequestMethod.GET)
 	public ResponseEntity<List<VehiculoEnParqueaderoOutDTO>> getVehiculosEnParqueadero() {
 		List<VehiculoEnParqueaderoOutDTO> listaVehiculosEnParqueadero = vigilanteServicio
@@ -38,7 +38,7 @@ public class VigilanteControlador {
 		return new ResponseEntity<>(listaVehiculosEnParqueadero, HttpStatus.OK);
 	}
 	
-	@CrossOrigin(value="http://localhost:4200")
+	@CrossOrigin(value="*")
 	@RequestMapping(value = "/buscarVehiculo/{placa}", method = RequestMethod.GET)
 	public ResponseEntity<VehiculoEnParqueaderoOutDTO> getVehiculoEnParqueadero(@PathVariable("placa") String placa) {
 		VehiculoEnParqueaderoOutDTO vehiculoEnParqueaderoDto = vigilanteServicio.consultarVehiculoEnParqueadero(placa);
@@ -50,7 +50,7 @@ public class VigilanteControlador {
 		return new ResponseEntity<>(vehiculoEnParqueaderoDto, HttpStatus.OK);
 	}
 	
-	@CrossOrigin(value="http://localhost:4200")
+	@CrossOrigin(value="*")
 	@RequestMapping(value = "/registrarEntradaVehiculo", method = RequestMethod.POST)
 	public ResponseEntity<String> registrarEntradaVehiculoEnParqueadero(
 			@RequestBody VehiculoRegistroInDTO vehiculoRegistroInDto) {
@@ -64,7 +64,7 @@ public class VigilanteControlador {
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 	
-	@CrossOrigin(value="http://localhost:4200")
+	@CrossOrigin(value="*")
 	@RequestMapping(value = "/registrarSalidaVehiculo", method = RequestMethod.POST)
 	public ResponseEntity<String> registrarSalidaVehiculoDeParqueadero(
 			@RequestBody VehiculoRegistroSalidaInDTO vehiculoRegistroSalidaInDto) {

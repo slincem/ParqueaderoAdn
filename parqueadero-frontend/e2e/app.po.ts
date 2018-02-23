@@ -1,11 +1,27 @@
 import { browser, by, element } from 'protractor';
 
-export class AppPage {
+export class RegistroPage {
   navigateTo() {
-    return browser.get('/');
+    return browser.get('/registrarVehiculo');
   }
 
-  getParagraphText() {
-    return element(by.css('app-root h1')).getText();
+  getInputPlaca() {
+    return element(by.css('#placa'));
+  }
+
+  getInputCilindraje() {
+    return element(by.css('#cilindraje'));
+  }
+
+  getInputTipoVehiculo() {
+    return element(by.css('#tipoVehiculo'));
+  }
+
+  getButtonRegistrar() {
+    return element(by.css('#btnRegistrar'));
+  }
+
+  getButtonVerListaVehiculos() {
+    return element(by.css('#btnVerListaVeh'))
   }
 }
